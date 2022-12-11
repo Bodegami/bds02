@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.devsuperior.bds02.dto.CityDTO;
 import com.devsuperior.bds02.entities.City;
@@ -19,11 +20,17 @@ public class CityService {
 	}
 	
 	
+	@Transactional(readOnly = true)
 	public List<CityDTO> findAll() {
 		List<City> list = repository.findAll(Sort.by("name"));
 		return list.stream().map(CityDTO::new).toList();
 	}
 	
-	
+	@Transactional
+	public CityDTO insert(CityDTO dto) {
+		City entity = new City(null, dto.getName());
+		entity = repository.save(entity);
+		return new CityDTO(entity);
+	}
 
 }
